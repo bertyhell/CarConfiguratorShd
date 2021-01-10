@@ -1,0 +1,113 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+}
+
+.App {
+
+}
+
+canvas {
+  width: 100vw !important;
+  height: 100vh !important;
+}
+
+.collapsable-menu {
+  transition: transform ease-out 0.3s;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 340px;
+}
+
+.collapsable-menu.collapsed {
+  transform: translate(0, 300px);
+}
+
+.collapse-button {
+  background-image: url('./assets/collapse-button.png');
+  width: 200px;
+  height: 40px;
+  background-size: contain;
+  background-position: bottom;
+  background-repeat: no-repeat;
+  margin-right: 0;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.collapsable-menu.collapsed .collapse-button {
+  background-image: url('./assets/expand-button.png');
+}
+
+.collapse-wrapper {
+  width: 100vw;
+  height: 300px;
+  background-color: #33333399;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+}
+
+.menu-tab {
+  width: 100px;
+  height: 40px;
+  display: inline-block;
+  list-style: none;
+  margin-right: 10px;
+  padding: 5px;
+  font-size: 14px;
+  text-transform: capitalize;
+  color: white;
+  line-height: 40px;
+  text-align: center;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.menu-tab.active {
+  background-color: #444444dd;
+}
+
+.menu-tab:hover {
+  background-color: #333333FF;
+}
+
+.menu-tab:first-child {
+  margin-left: 10px;
+}
+
+.menu-options-wrapper {
+  background-color: #444444dd;
+  height: 250px;
+  top: 50px;
+}
+
+.menu-option {
+  width: auto;
+  height: 230px;
+  float: left;
+  list-style: none;
+  margin-top: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.menu-option:hover img {
+  filter: brightness(120%);
+}
+
+.menu-option:first-child {
+  margin-left: 10px;
+}
+
+.menu-option img {
+  height: 220px;
+}
+
