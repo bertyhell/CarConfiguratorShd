@@ -47,8 +47,7 @@ const CONFIGURATION_OPTIONS: Record<Tab, OptionInfo[]> = {
 function App() {
 	const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
 	const [activeTab, setActiveTab] = useState<Tab>('car');
-	const [lastAction, setLastAction] = useState<Tab | null>(null);
-	const [lastActionValue, setLastActionValue] = useState<string | null>(null);
+	const [lastAction, setLastAction] = useState<[Tab, string] | null>(null);
 	const [unityContext, setUnityContext] = useState<UnityContext | null>(null);
 	const [isUnityReady, setIsUnityReady] = useState<boolean>(false);
 
@@ -61,21 +60,8 @@ function App() {
 		setIsCollapsed((collapsed) => !collapsed);
 	};
 
-	const updateConfigAccordingToUrlParam = useCallback(() => {
-		if (car) {
-			changeConfiguration('car', car);
-		}
-		if (rim) {
-			changeConfiguration('rim', rim);
-		}
-		if (paint) {
-			changeConfiguration('paint', paint);
-		}
-	}, []);
-
 	const changeConfiguration = useCallback((action: Tab, value: string) => {
-		setLastAction(action);
-		setLastActionValue(value);
+		setLastAction([action, value]);
 
 		switch (action) {
 			case 'car':
@@ -90,56 +76,40 @@ function App() {
 				setPaint(value);
 				break;
 		}
-	}, [setLastAction, setLastActionValue, setCar, setRim, setPaint]);
+	}, [setLastAction, setCar, setRim, setPaint]);
 
 	// Run once at startup
 	useEffect(() => {
 		// Init unity
 		const context = new UnityContext({
-			loaderUrl: "game/Build/game.loader.js",
-			dataUrl: "game/Build/game.data",
-			frameworkUrl: "game/Build/game.framework.js",
-			codeUrl: "game/Build/game.wasm",
+			loaderUrl: process.env.PUBLIC_URL + "/game/Build/game.loader.js",
+			dataUrl: process.env.PUBLIC_URL + "/game/Build/game.data",
+			frameworkUrl: process.env.PUBLIC_URL + "/game/Build/game.framework.js",
+			codeUrl: process.env.PUBLIC_URL + "/game/Build/game.wasm",
 		});
 
 		// Let unity tell us when it is finished loading the CarConfigManager
 		context.on("ReadyForCommands", () => {
 			console.log('received ReadyForCommands event from unity');
 			setIsUnityReady(true);
-			updateConfigAccordingToUrlParam();
+			changeConfiguration('car', car as string);
+			changeConfiguration('rim', rim as string);
+			changeConfiguration('paint', paint as string);
 			(document.getElementsByTagName('CANVAS')[0] as HTMLCanvasElement).style.opacity = '1';
 		});
 
 		setUnityContext(context);
-	}, [updateConfigAccordingToUrlParam]);
+	}, []);
 
 	useEffect(() => {
-		if (!lastAction || !lastActionValue || !unityContext || !isUnityReady) {
+		if (!lastAction || !unityContext || !isUnityReady) {
 			return;
 		}
 		unityContext.send(
 			'CarConfigManager',
 			'ChangeConfiguration',
-			`Change${capitalize(lastAction)}:${lastActionValue}`);
-	}, [unityContext, lastAction, lastActionValue, isUnityReady]);
-
-	useEffect(() => {
-		if (car) {
-			changeConfiguration('car', car);
-		}
-	}, [car, changeConfiguration]);
-
-	useEffect(() => {
-		if (rim) {
-			changeConfiguration('rim', rim);
-		}
-	}, [rim, changeConfiguration]);
-
-	useEffect(() => {
-		if (paint) {
-			changeConfiguration('paint', paint);
-		}
-	}, [paint, changeConfiguration]);
+			`Change${capitalize(lastAction[0])}:${lastAction[1]}`);
+	}, [unityContext, lastAction, isUnityReady]);
 
 	const capitalize = (text: string): string => {
 		return text.charAt(0).toUpperCase() + text.slice(1);
@@ -160,7 +130,9 @@ function App() {
 		return Object.keys(CONFIGURATION_OPTIONS).map((tab) => {
 			return <li
 				className={classnames('menu-tab', { 'active': tab === activeTab })}
-				onClick={() => setActiveTab(tab as Tab)}
+				onClick={() => {
+					setActiveTab(tab as Tab);
+				}}
 				key={'tab-' + tab}
 			>
 				{capitalize(tab)}
@@ -172,7 +144,9 @@ function App() {
 		return CONFIGURATION_OPTIONS[activeTab].map((option) => {
 			return <li
 				className="menu-option"
-				onClick={() => changeConfiguration(activeTab, option.value)}
+				onClick={() => {
+					changeConfiguration(activeTab, option.value);
+				}}
 				key={'option-' + option.value}
 			>
 				<img src={option.image} alt={'option ' + option.value} />

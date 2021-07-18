@@ -5,28 +5,34 @@ The configuration bar is built in html which communicates with Unity in 2 direct
 
 [Demo](http://bertyhell.s3-website.eu-central-1.amazonaws.com/projects/car-configurator-shd)
 
-![Car with configuration bar at the bottom](screenshot.png)
+![Car with configuration bar at the bottom](readme_assets/screenshot.png)
 
 ## Development
 
 Clone the repo
 
 ## Unity part of the site:
-Open Unity and build the project for the web target. Then copy the build folder to:
-```
-site/public/game
-```
+Open the game folder in Unity
 
-This file should then exist at this location:
-```
-site/public/game/Build/game.loader.js
-```
+Open level 1:
+![](readme_assets/unity-level.png)
+
+Open build settings from the unity file menu
+* Select the WebGL platform
+* Click the "Switch Platform" button
+* Click the "Build And Run" button
+![](readme_assets/unity-build-target.png)
+  
+Select the folder: site\public\game
+![](readme_assets/unity-build-location.png)
+
+Wait for the build to finish.
 
 ## React part of the site:
 
 navigate to /site
-make sure you have nodeJS installed
-install the project dependencies:
+make sure you have [NodeJS](https://nodejs.org/) installed
+open a command line, navigate to the site folder and install the project dependencies:
 ```
 npm install
 ```
